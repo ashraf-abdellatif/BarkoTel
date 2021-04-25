@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { FakeAPIService } from './Service/fake-api.service';
 
 @Component({
   selector: 'app-root',
@@ -7,31 +8,62 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'BarkoTel';
-  Items: string[] = [
-    'Apple',
-    'headphones',
-    'sofa',
-    'thread',
-    'Orange',
-    'shoes',
-    'sandal',
-    'lamp',
-    'Banana',
-  ];
   FilterItem: string[] | undefined;
   DisplayItem: string[] | undefined;
-  constructor() {}
+  currentIndex: any;
+  currentSearchValue: string | undefined;
+  tempSearchValue: string | undefined;
+  constructor(
+    private fakeAPIService: FakeAPIService
+  ) { }
+
   LoadSearchData(searchValue: any): void {
+    this.currentIndex = -1;
     this.FilterItem = [];
-    if (searchValue.value)
-      this.FilterItem = this.Items.filter((a) =>
-        a.toLowerCase().includes(searchValue.value.toLowerCase())
-      ).slice(0, 5);
+    this.tempSearchValue = '';
+    if (searchValue.value) {
+      this.fakeAPIService.loadSearchData(searchValue).subscribe(result => {
+        this.FilterItem = result;
+      });
+      this.tempSearchValue = searchValue.value;
+    }
   }
   LoadData(item: any): void {
-    this.DisplayItem = this.Items.filter((a) =>
-      a.toLowerCase().includes(item.value.toLowerCase())
-    );
+    this.currentSearchValue = item;
+    this.tempSearchValue = item;
+    this.fakeAPIService.loadData(item).subscribe(result => {
+      this.DisplayItem = result;
+    })
     this.FilterItem = [];
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (this.FilterItem) {
+      if (event.key == 'ArrowDown') {
+        if (this.FilterItem.length - 1 > this.currentIndex) {
+          this.currentIndex = this.currentIndex + 1;
+        } else {
+          this.currentIndex = -1;
+        }
+      } else if (event.key == 'ArrowUp') {
+        if (this.FilterItem.length > 0 && this.currentIndex > 0) {
+          this.currentIndex = this.currentIndex - 1;
+        } else {
+          this.currentIndex = this.FilterItem ? this.FilterItem.length : -1;
+        }
+      }
+      if (this.currentIndex >= 0 && this.currentIndex <= this.FilterItem.length - 1) {
+        this.currentSearchValue = this.FilterItem[this.currentIndex];
+      } else {
+        this.currentSearchValue = this.tempSearchValue;
+      }
+    }
+
+
+  }
+
+  lst_hover(index: any) {
+    this.currentIndex = index;
   }
 }

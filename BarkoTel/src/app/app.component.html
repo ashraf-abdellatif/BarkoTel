@@ -1,28 +1,39 @@
 <div class="container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <a class="navbar-brand" href="#"><i class="fa fa-heart"></i> BarkoTel <i class="fa fa-heart"></i></a>
 
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <a class="navbar-brand" href="#"><i class="fa fa-heart"></i> BarkoTel <i class="fa fa-heart"></i></a>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
 
-    <div class="collapse navbar-collapse" id="navbarCollapse">
+        </div>
+    </nav>
+    <div class="row" style="padding: 3%;">
+        <div class="col-md-12">
+            <input placeholder="Type to Search Her" id="SearchText" [(ngModel)]="currentSearchValue" name="SearchText" class="form-control" (input)="LoadSearchData($event.target)" (keydown.enter)="LoadData($any($event.target).value)">
+            <div *ngIf="FilterItem" style="background-color: rgb(198, 198, 212);">
+                <ul *ngFor=" let item of FilterItem;let i=index">
+                    <li [ngClass]="i==currentIndex ? 'searchListhover': ''" (click)="LoadData(item)" (mouseenter)="lst_hover(i)">
+                        {{item}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding: 3%;">
+        <!-- <app-display *ngIf="DisplayItem" [DisplayItem]="DisplayItem"></app-display> -->
+        <div class="rtl container mt-2" *ngIf="DisplayItem">
+            <div class="row">
+                <div *ngFor="let user of DisplayItem" class="co l-lg-2 col-md-3 col-sm-6">
+                    <div class="card mb-4">
+                        <div class="text-center wrapper">
+                            <img class="card-img-top" src="#" alt="{{user}}">
+                        </div>
+                        <div class="card-body p-1">
+                            <h6 class="card-titl text-center"><i class="fa fa-user"></i> {{user}} </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
-  </nav>
-
-  <div class="row">
-    <div class="col-md-10">
-      <input placeholder="Search Her" id="SearchText" name="SearchText" class="form-control"
-        (input)="LoadSearchData($event.target)" (keydown.enter)="LoadData($event.target)">
-      <div *ngIf="FilterItem" style="background-color: darkgrey;">
-        <ul *ngFor="let item of FilterItem" (click)="LoadData(item)">
-          <li>
-            {{item}}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-
-  </div>
 </div>
